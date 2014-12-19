@@ -5,6 +5,8 @@ from flask import Flask, flash, redirect, render_template, request, \
     session, url_for, g
 from functools import wraps
 import sqlite3
+from forms import AddTaskForm
+
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -77,12 +79,12 @@ def new_task():
         return redirect(url_for('tasks'))
     else:
         g.db.execute('insert into tasks (name, due_date, priority, status) values (?, ?, ?, 1)',
-          [request.form['name'], request.form['due_date'], request.form['priority']])
+         [request.form['name'], request.form['due_date'], request.form['priority']])
         g.db.commit()
         g.db.close()
         flash('New entry was successfully posted.  Thanks.')
         return redirect(url_for('tasks')
-	
+        
 # Mark tasks as complete:
 @app.route('/complete/<int:task_id>/',)
 @login_required
