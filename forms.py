@@ -38,8 +38,14 @@ class RegisterForm(Form):
     password = PasswordField(
         'Password',
         validators=[DataRequired(),
-        Length(min=6, max=40)]
+        Length(min=6, max=40)])
+    confirm = PasswordField(
+        'Repeat Password',
+        [DataRequired(),
+        EqualTo('password',
+        message='Passwords must match')]
     )
+	
 	
 class LoginForm(Form):
     name = TextField('Username', validators=[DataRequired()])
