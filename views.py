@@ -33,16 +33,33 @@ def logout():
 	
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    error = None
+    form = LoginForm(request.form)
     if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME'] or \
-                request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid Credentials. Please try again.'
-            return render_template('login.html', error=error)
-        else:
-            session['logged_in'] = True
-            return redirect(url_for('tasks'))
+        if form.validate_on_submit():
+            u = User.query.filter_by(
+                name=request.form['name'],
+                password=request.form['password']
+            ).first()
+            if u is None:
+                error = 'Invalid username or password.'
+                return render_template(
+                    "login.html", 
+                    form=form,
+                    error=error
+                )
+            else:
+                session['logged_in'] = True
+                flash('You are logged in.  Enjoy!')
+                return redirect(url_for('tasks'))
+        else: 
+            return render_template(
+                "login.html",
+                form=form,
+                error=error
+            )				
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', form=form)
 
 @app.route('/tasks/')
 @login_required
