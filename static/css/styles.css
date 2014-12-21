@@ -31,7 +31,9 @@ h2 {
 .entries {
   list-style: none;
   margin: 0;
-  
+  padding: 0;
+}
+    
 .entries li {
   margin: 0.8em 1.2em;
 }
@@ -65,6 +67,7 @@ h2 {
 .error {
   background: #F0D6D6;
   padding: 0.5em;
+}  
 
 .datagrid table {
   border-collapse: collapse;

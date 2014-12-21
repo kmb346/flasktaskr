@@ -5,13 +5,13 @@
   <a href="/logout">Logout</a>
   <div class="add-task">
     <h3>Add a new task:</h3>
-	    <form action="{{ url_for('new_task') }}" method="post">
-		  {{ form.csrf_token }}
-		  <p>{{ form.name.label }}: {{form.name }}<br>{{
-		     form.due_date.label }}:{{ form.due_date }}&nbsp;{{
-			 form.priority.label }}: {{ form.priority }}</p>
-		  <p><input type="submit" value="Submit"></p>
-		</form>
+	  <form action="{{ url_for('new_task') }}" method="post">
+		{{ form.csrf_token }}
+		<p>{{ form.name.label }}: {{form.name }}<br>{{
+		   form.due_date.label }}:{{ form.due_date }}&nbsp;{{
+	       form.priority.label }}: {{ form.priority }}</p>
+		<p><input type="submit" value="Submit"></p>
+      </form>
   </div>
   <div class="entries">
     <br>
