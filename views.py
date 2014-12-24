@@ -7,6 +7,7 @@ from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
 from forms import AddTaskForm, RegisterForm, LoginForm
 import datetime
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -131,10 +132,15 @@ def register():
                 form.email.data,
                 form.password.data,
             )
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Thanks for registering.  Please login.')
-            return redirect(url_for('login'))
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                flash('Thanks for registering.  Please login.')
+                return redirect(url_for('login'))
+            except IntegrityError:
+                error = 'Oh no! That username and/or email already exist. Please try again.'				
+                return render_template('register.html', form=form,
+	                error=error)
         else:
             return render_template('register.html', form=form,
                 error=error)
