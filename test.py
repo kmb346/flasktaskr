@@ -41,7 +41,7 @@ class AllTests(unittest.TestCase):
             t.name
         assert t.name == "mherman"
 		
-    def test_form_is_present_on_login_page(self)
+    def test_form_is_present_on_login_page(self):
         response = self.app.get('/')
         self.assertEquals(response.status_code, 200)
         self.assertIn('Please sign in to access your task list',
@@ -81,7 +81,7 @@ class AllTests(unittest.TestCase):
             response.data)
 
     def test_user_registration(self):
-        self.app.get('register/', follow_redirect=True)
+        self.app.get('register/', follow_redirects=True)
         response = self.register('Michael', 'michael@realpython.com',
             'python', 'python')
         assert 'Thanks for registering. Please login.' in response.data
@@ -91,14 +91,52 @@ class AllTests(unittest.TestCase):
         self.register('Michael', 'michael@realpython.com', 'python',
             'python')
         self.app.get('register/', follow_redirects=True)
-		response = self.register(
+        response = self.register(
             'Michael', 'michael@realpython.com', 'python', 'python'
         )
         self.assertIn(
             'Oh no! That username and/or email already exist.',
             response.data
         )
+
+    def logout(self):
+        return self.app.get('logout/', follow_redirects=True)
 		
+    def test_logged_in_users_can_logout(self):
+        self.register('Fletcher', 'fletcher@realpython.com',
+            'python101', 'python101')
+        self.login('Fletcher', 'python101')
+        response = self.logout()
+        self.assertIn('You are logged out. Bye. :(', response.data)
+
+    def test_not_logged_in_users_cannot_logout(self):
+        response = self.logout()
+        self.assertNotIn('You are logged out. Bye. :(', response.data)
+
+    def create_user(self, name, email, password):
+        new_user = User(name=name, email=email, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+		
+    def create_task(self):
+        return self.app.post('add/', data=dict(
+            name='Go to the bank',
+            due_date='02/05/2014',
+            priority='1',
+            posted_date='02/04/2014',
+            status='1'
+        ), follow_redirects=True)
+		
+    def test_users_can_add_tasks(self):
+        self.create_user('Michael', 'michael@realpython.org', 'python')
+        self.login('Michael', 'python')
+        self.app.get('tasks/', follow_redirects=True)
+        response = self.create_task()
+        self.assertIn(
+            'New entry was successfully posted. Thanks.', response.data
+        )
+
+    
 	
 if __name__ == '__main__':
     unittest.main()
