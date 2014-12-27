@@ -7,6 +7,7 @@ from functools import wraps
 from flask.ext.sqlalchemy import SQLAlchemy
 from forms import AddTaskForm, RegisterForm, LoginForm
 import datetime
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -27,10 +28,11 @@ def login_required(test):
     return wrap
 	
 @app.route('/logout/')
+@login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('user_id', None)
-    flash('You are logged out.  Bye. :(')
+    flash('You are logged out. Bye. :(')
     return redirect(url_for('login'))
 	
 @app.route('/', methods=['GET', 'POST'])
@@ -95,7 +97,7 @@ def new_task():
             )
             db.session.add(new_task)
             db.session.commit()
-            flash('New entry was successfully posted.  Thanks')
+            flash('New entry was successfully posted. Thanks.')
     return redirect(url_for('tasks'))
         
 # Mark tasks as complete:
@@ -131,10 +133,15 @@ def register():
                 form.email.data,
                 form.password.data,
             )
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Thanks for registering.  Please login.')
-            return redirect(url_for('login'))
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                flash('Thanks for registering. Please login.')
+                return redirect(url_for('login'))
+            except IntegrityError:
+                error = 'Oh no! That username and/or email already exist. Please try again.'			
+                return render_template('register.html', form=form, 
+                    error=error)   
         else:
             return render_template('register.html', form=form,
                 error=error)
@@ -144,7 +151,7 @@ def register():
 def flash_errors(form):
     for field, errors in form.errors.items():
         for error in errors:
-            flash(u"Error in the %s field - %s" %(
-                getattr(form,field).label.text, error), 'error')
+            flash("Error in the %s field - %s" %(
+                getattr(form, field).label.text, error), 'error')
 		
 	

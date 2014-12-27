@@ -10,7 +10,7 @@
   <p>
 	{{ form.name(placeholder="name") }}
 	<span class="error">
-	  {% if forms.name.errors %}
+	  {% if form.name.errors %}
 		{% for error in form.name.errors %}
 		  {{ error }}
 		{% endfor %}
