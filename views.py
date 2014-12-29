@@ -139,9 +139,9 @@ def register():
                 flash('Thanks for registering. Please login.')
                 return redirect(url_for('login'))
             except IntegrityError:
-                error = 'Oh no! That username and/or email already exist. Please try again.'			
-                return render_template('register.html', form=form, 
-                    error=error)   
+                error = 'Oh no! That username and/or email already exist. Please try again.'				
+                return render_template('register.html', form=form,
+	                error=error)
         else:
             return render_template('register.html', form=form,
                 error=error)
@@ -152,6 +152,4 @@ def flash_errors(form):
     for field, errors in form.errors.items():
         for error in errors:
             flash("Error in the %s field - %s" %(
-                getattr(form, field).label.text, error), 'error')
-		
-	
+                getattr(form,field).label.text, error), 'error')

@@ -3,7 +3,6 @@
 {% block content %}
 
 <h1>Welcome to FlaskTaskr.</h1>
-<h3>Please register to access the task list.</h3>
 <form class="form-signin" role="form" method="post" action="">
   <div class="lead">Please register to start a task list</div>
   {{ form.csrf_token }}
@@ -51,7 +50,7 @@
     type="submit">Register</button>
   <br>
   <br>  
-	<p><em>Already registered?</em> Click <a href="/">here</a> to 
+  <p><em>Already registered?</em> Click <a href="/">here</a> to 
 	    login.</p>
 </form>
 
