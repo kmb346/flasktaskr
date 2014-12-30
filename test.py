@@ -68,11 +68,20 @@ class AllTests(unittest.TestCase):
         response = self.login('Michael', 'python')
         self.assertIn('You are logged in.  Enjoy!', response.data)
 
-    def test_invalid_form_data(self):
+    def test_user_registration_error(self):
         self.register('Michael', 'michael@realpython.com', 'python',
             'python')
         response = self.login('alert("alert box!");', 'foo')
         self.assertIn('Invalid username or password.', response.data)
+		
+    def test_user_registration_field_errors(self):
+        response = self.register(
+            'Michael', 'michael@realpython.com', 'python', ''
+        )
+        self.assertIn(
+            'This field is required.',
+            response.data
+        )
 		
     def test_form_is_present_on_register_page(self):
         response = self.app.get('register/')
@@ -171,10 +180,10 @@ class AllTests(unittest.TestCase):
         self.login('Michael', 'python')
         self.app.get('tasks/', follow_redirects=True)
         self.create_task()
-        self.logut()
+        self.logout()
         self.create_user('Fletcher', 'fletcher@realpython.com',
             'python101')
-        self.login()
+        self.login('Fletcher', 'python101')
         self.app.get('tasks/', follow_redirects=True)
         response = self.app.get("complete/1/", follow_redirects=True)
         self.assertNotIn(
